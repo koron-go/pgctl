@@ -60,13 +60,13 @@ func TestPgctl(t *testing.T) {
 	time.Sleep(3 * time.Second)
 
 	// after Start()
-	err = Start(dir, nil)
-	if err != ErrAlreadyRunning {
-		t.Error("Start() failed", err)
-	}
 	err = Status(dir)
 	if err != nil {
 		t.Error("Status() failed", err)
+	}
+	err = Start(dir, nil)
+	if err != ErrAlreadyRunning {
+		t.Error("Start() failed", err)
 	}
 
 	err = Stop(dir)
