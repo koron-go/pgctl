@@ -86,9 +86,16 @@ func (srv *Server) Stop() error {
 	return nil
 }
 
+// IsRunning checks PostgreSQL server is running or not.
+func (srv *Server) IsRunning() bool {
+	srv.m.Lock()
+	defer srv.m.Unlock()
+	return srv.r
+}
+
 // Name returns data source name if server is running.
 // Otherwise returns empty string.
-func (srv Server) Name() string {
+func (srv *Server) Name() string {
 	srv.m.Lock()
 	defer srv.m.Unlock()
 	if !srv.r {
