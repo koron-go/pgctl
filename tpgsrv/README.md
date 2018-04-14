@@ -2,6 +2,8 @@
 
 `tpgsrv` helps to create independent PostgreSQL server instance for test.
 
+cf. `Test::PostgreSQL` for perl
+
 ## Example
 
 ```golang
