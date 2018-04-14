@@ -83,7 +83,7 @@ func initDBContext(ctx context.Context, dir string, io *InitDBOptions) error {
 		return ErrAlreadyExists
 	}
 
-	cmd := exec.CommandContext(ctx, "pg_ctl", "initdb", "-s", "-D", dir, "-o", io.Options())
+	cmd := exec.CommandContext(ctx, getPgCtl(), "initdb", "-s", "-D", dir, "-o", io.Options())
 	err = cmd.Run()
 	if err != nil {
 		return err
@@ -145,7 +145,7 @@ func startContext(ctx context.Context, dir string, so *StartOptions) error {
 		return err
 	}
 
-	cmd := exec.CommandContext(ctx, "pg_ctl", "start", "-s", "-D", dir, "-o", so.Options())
+	cmd := exec.CommandContext(ctx, getPgCtl(), "start", "-s", "-D", dir, "-w", "-o", so.Options())
 	err = cmd.Run()
 	if _, ok := err.(*exec.ExitError); ok {
 		return ErrStartDatabase
@@ -160,7 +160,7 @@ func Status(dir string) error {
 
 // statusContext checks PostgreSQL server is running or not, with Context.
 func statusContext(ctx context.Context, dir string) error {
-	cmd := exec.CommandContext(ctx, "pg_ctl", "status", "-D", dir)
+	cmd := exec.CommandContext(ctx, getPgCtl(), "status", "-D", dir)
 	err := cmd.Run()
 	if err != nil {
 		if _, ok := err.(*exec.ExitError); ok {
@@ -178,7 +178,7 @@ func Stop(dir string) error {
 
 // stopContext stops PostgreSQL server on dir with Context.
 func stopContext(ctx context.Context, dir string) error {
-	cmd := exec.CommandContext(ctx, "pg_ctl", "stop", "-s", "-D", dir)
+	cmd := exec.CommandContext(ctx, getPgCtl(), "stop", "-s", "-D", dir)
 	err := cmd.Run()
 	if err != nil {
 		if _, ok := err.(*exec.ExitError); ok {
@@ -191,6 +191,14 @@ func stopContext(ctx context.Context, dir string) error {
 
 // IsAvailable checks "pg_ctl" command is available or not.
 func IsAvailable() bool {
-	_, err := exec.LookPath("pg_ctl")
+	_, err := exec.LookPath(getPgCtl())
 	return err == nil
+}
+
+func getPgCtl() string {
+	dir, has := os.LookupEnv("POSTGRES_HOME")
+	if !has {
+		return "pg_ctl"
+	}
+	return filepath.Join(dir, "bin", "pg_ctl")
 }

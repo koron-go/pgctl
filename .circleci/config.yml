@@ -2,9 +2,17 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:latest
+      - image: circleci/golang:stretch
+        environment:
+          POSTGRES_HOME: /usr/lib/postgresql/9.6
     working_directory: /go/src/github.com/koron-go/pgctl
     steps:
       - checkout
+      - run:
+          name: Setup PostgreSQL for tests
+          command: |
+            sudo apt-get install -y postgresql-9.6
+            sudo service postgresql stop
+            sudo chmod o+w /var/run/postgresql
       - run: go get -v -t -d
       - run: go test -v
