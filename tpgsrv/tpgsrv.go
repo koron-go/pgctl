@@ -17,7 +17,7 @@ type Server struct {
 	pn   uint16
 }
 
-// New creates an instance of PostgreSQL server and starts it.
+// New creates an independent instance of PostgreSQL server and starts it.
 func New(tb testing.TB) *Server {
 	tb.Helper()
 	dir, err := ioutil.TempDir("", "tpgsrv-")
