@@ -11,8 +11,8 @@ type Server struct {
 	m   sync.Mutex
 	r   bool
 	dir string
-	io  *InitDBOptions
-	so  *StartOptions
+	io  InitDBOptions
+	so  StartOptions
 }
 
 // NewServer creates an instance of PostgreSQL.
@@ -27,7 +27,11 @@ func (srv *Server) InitDBOptions(io *InitDBOptions) error {
 	if srv.r {
 		return ErrAlreadyRunning
 	}
-	srv.io = io
+	if io != nil {
+		srv.io = *io
+	} else {
+		srv.io = InitDBOptions{}
+	}
 	return nil
 }
 
@@ -38,7 +42,11 @@ func (srv *Server) StartOptions(so *StartOptions) error {
 	if srv.r {
 		return ErrAlreadyRunning
 	}
-	srv.so = so
+	if so != nil {
+		srv.so = *so
+	} else {
+		srv.so = StartOptions{}
+	}
 	return nil
 }
 
@@ -49,21 +57,15 @@ func (srv *Server) Start() error {
 	if srv.r {
 		return ErrAlreadyRunning
 	}
-	if srv.io == nil {
-		srv.io = &InitDBOptions{}
-	}
-	if srv.so == nil {
-		srv.so = &StartOptions{}
-	}
 	if _, err := os.Stat(srv.dir); err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
-		if err := InitDB(srv.dir, srv.io); err != nil {
+		if err := InitDB(srv.dir, &srv.io); err != nil {
 			return err
 		}
 	}
-	if err := Start(srv.dir, srv.so); err != nil {
+	if err := Start(srv.dir, &srv.so); err != nil {
 		return err
 	}
 	srv.r = true
@@ -86,7 +88,7 @@ func (srv *Server) Stop() error {
 
 // Name returns data source name if server is running.
 // Otherwise returns empty string.
-func (srv Server) Name() (string) {
+func (srv Server) Name() string {
 	srv.m.Lock()
 	defer srv.m.Unlock()
 	if !srv.r {

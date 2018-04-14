@@ -37,10 +37,10 @@ defer db.Close()
 import "github.com/koron-go/pgctl"
 
 // initialize a database
-err := pgctl.InitDB("dbdir")
+err := pgctl.InitDB("dbdir", nil)
 
 // start a database in background
-err := pgctl.Start("dbdir")
+err := pgctl.Start("dbdir", nil)
 
 // check a database is running or not
 err := pgctl.Status("dbdir")
