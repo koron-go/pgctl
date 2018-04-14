@@ -98,12 +98,27 @@ type StartOptions struct {
 	SocketDir string
 }
 
+func (so *StartOptions) port() uint16 {
+	if so.Port == 0 {
+		return 5432
+	}
+	return so.Port
+}
+
+func (so *StartOptions) portString() string {
+	return strconv.Itoa(int(so.port()))
+}
+
+func (so *StartOptions) host() string {
+	return "127.0.0.1"
+}
+
 // Options generates an string for "-o".
 func (so *StartOptions) Options() string {
-	args := make([]string, 0, 4)
-	args = append(args, "-h 127.0.0.1 -F")
+	args := make([]string, 0, 6)
+	args = append(args, "-h", so.host(), "-F")
 	if so.Port != 0 {
-		args = append(args, "-p", strconv.Itoa(int(so.Port)))
+		args = append(args, "-p", so.portString())
 	}
 	if so.SocketDir != "" {
 		args = append(args, "-k", so.SocketDir)
@@ -172,4 +187,10 @@ func stopContext(ctx context.Context, dir string) error {
 		return err
 	}
 	return nil
+}
+
+// IsAvailable checks "pg_ctl" command is available or not.
+func IsAvailable() bool {
+	_, err := exec.LookPath("pg_ctl")
+	return err == nil
 }

@@ -3,16 +3,14 @@ package pgctl
 import (
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"testing"
 	"time"
 )
 
 func TestPgctl(t *testing.T) {
-	_, err := exec.LookPath("pg_ctl")
-	if err != nil {
-		t.Skip("can't find pg_ctl", err)
+	if !IsAvailable() {
+		t.Skip("can't find pg_ctl")
 	}
 
 	tmp, err := ioutil.TempDir("", t.Name())
@@ -20,68 +18,68 @@ func TestPgctl(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer os.RemoveAll(tmp)
-	db := filepath.Join(tmp, "db")
+	dir := filepath.Join(tmp, "db")
 
 	// before InitDB
-	err = Start(db, nil)
+	err = Start(dir, nil)
 	if err != ErrStartDatabase {
 		t.Error("unexpected Start() result", err)
 	}
-	err = Stop(db)
+	err = Stop(dir)
 	if err != ErrNotRunning {
 		t.Error("unexpected Stop() result", err)
 	}
-	err = Status(db)
+	err = Status(dir)
 	if err != ErrNotRunning {
 		t.Error("unexpected Stop() result", err)
 	}
 
-	err = InitDB(db, nil)
+	err = InitDB(dir, nil)
 	if err != nil {
 		t.Fatal("InitDB() failed", err)
 	}
 
 	// after InitDB() and before Start()
-	err = InitDB(db, nil)
+	err = InitDB(dir, nil)
 	if err != ErrAlreadyExists {
 		t.Error("InitDB() failed", err)
 	}
-	err = Stop(db)
+	err = Stop(dir)
 	if err != ErrNotRunning {
 		t.Error("unexpected Stop() result", err)
 	}
-	err = Status(db)
+	err = Status(dir)
 	if err != ErrNotRunning {
 		t.Error("unexpected Stop() result", err)
 	}
 
-	err = Start(db, nil)
+	err = Start(dir, nil)
 	if err != nil {
 		t.Fatal("Start() failed", err)
 	}
 	time.Sleep(3 * time.Second)
 
 	// after Start()
-	err = Start(db, nil)
+	err = Start(dir, nil)
 	if err != ErrAlreadyRunning {
 		t.Error("Start() failed", err)
 	}
-	err = Status(db)
+	err = Status(dir)
 	if err != nil {
 		t.Error("Status() failed", err)
 	}
 
-	err = Stop(db)
+	err = Stop(dir)
 	if err != nil {
 		t.Fatal("Stop() failed", err)
 	}
 
 	// after Stop()
-	err = Stop(db)
+	err = Stop(dir)
 	if err != ErrNotRunning {
 		t.Error("unexpected Stop() result", err)
 	}
-	err = Status(db)
+	err = Status(dir)
 	if err != ErrNotRunning {
 		t.Error("unexpected Stop() result", err)
 	}
