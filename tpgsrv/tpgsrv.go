@@ -59,7 +59,9 @@ func start(psrv *pgctl.Server) (uint16, error) {
 func (s *Server) Close() {
 	s.tb.Helper()
 	if err := s.psrv.Stop(); err != nil {
-		s.tb.Error("failed to stop PostgreSQL server:", err)
+		if err != pgctl.ErrNotRunning {
+			s.tb.Error("failed to stop PostgreSQL server:", err)
+		}
 	}
 	if err := os.RemoveAll(s.dir); err != nil {
 		s.tb.Errorf("failed to remove %q: %s", s.dir, err)
