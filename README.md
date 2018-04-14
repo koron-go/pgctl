@@ -19,5 +19,5 @@ err := pgctl.Start("dbdir")
 err := pgctl.Status("dbdir")
 
 // terminate a database
-err := pgctl.Stop("dbdri")
+err := pgctl.Stop("dbdir")
 ```
