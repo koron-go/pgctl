@@ -17,19 +17,16 @@ func TestDB(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer os.RemoveAll(tmp)
-	dir := filepath.Join(tmp, "db")
+	dir := filepath.Join(tmp, "data")
 
-	db := NewDB(dir)
-	if err := db.Start(); err != nil {
+	srv := NewServer(dir)
+	if err := srv.Start(); err != nil {
 		t.Fatal("failed to stat DB", err)
 	}
-	defer db.Stop()
+	defer srv.Stop()
 
-	n, err := db.Name()
-	if err != nil {
-		t.Fatal("db.Name() failed", err)
-	}
+	n := srv.Name()
 	if n != "postgres://postgres@127.0.0.1:5432/postgres" {
-		t.Error("db.Name() returns unexpected:", n)
+		t.Error("srv.Name() returns unexpected:", n)
 	}
 }

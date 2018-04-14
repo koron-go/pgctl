@@ -31,6 +31,7 @@ type InitDBOptions struct {
 	Locale   string
 }
 
+// Options generates an string for "-o".
 func (io *InitDBOptions) Options() string {
 	args := make([]string, 0, 10)
 	args = append(args,

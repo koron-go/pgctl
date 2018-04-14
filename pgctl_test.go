@@ -18,7 +18,7 @@ func TestPgctl(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer os.RemoveAll(tmp)
-	dir := filepath.Join(tmp, "db")
+	dir := filepath.Join(tmp, "data")
 
 	// before InitDB
 	err = Start(dir, nil)
