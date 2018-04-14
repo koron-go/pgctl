@@ -26,6 +26,7 @@ db, err := sql.Open("postgres", srv.Name())
 if err != nil {
     panic(err)
 }
+defer db.Close()
 
 // TODO: enjoy your work with "db"!
 ```
