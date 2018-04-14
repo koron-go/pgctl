@@ -23,7 +23,7 @@ func TestPgctl(t *testing.T) {
 	db := filepath.Join(tmp, "db")
 
 	// before InitDB
-	err = Start(db)
+	err = Start(db, nil)
 	if err != ErrStartDatabase {
 		t.Error("unexpected Start() result", err)
 	}
@@ -36,13 +36,13 @@ func TestPgctl(t *testing.T) {
 		t.Error("unexpected Stop() result", err)
 	}
 
-	err = InitDB(db)
+	err = InitDB(db, nil)
 	if err != nil {
 		t.Fatal("InitDB() failed", err)
 	}
 
 	// after InitDB() and before Start()
-	err = InitDB(db)
+	err = InitDB(db, nil)
 	if err != ErrAlreadyExists {
 		t.Error("InitDB() failed", err)
 	}
@@ -55,14 +55,14 @@ func TestPgctl(t *testing.T) {
 		t.Error("unexpected Stop() result", err)
 	}
 
-	err = Start(db)
+	err = Start(db, nil)
 	if err != nil {
 		t.Fatal("Start() failed", err)
 	}
 	time.Sleep(3 * time.Second)
 
 	// after Start()
-	err = Start(db)
+	err = Start(db, nil)
 	if err != ErrAlreadyRunning {
 		t.Error("Start() failed", err)
 	}
