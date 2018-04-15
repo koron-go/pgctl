@@ -101,5 +101,10 @@ func (srv *Server) Name() string {
 	if !srv.r {
 		return ""
 	}
-	return fmt.Sprintf("postgres://%[1]s@%[2]s:%[3]s/%[1]s", srv.io.user(), srv.so.host(), srv.so.portString())
+	u := srv.io.user()
+	dbn := srv.so.DBName
+	if dbn == "" {
+		dbn = u
+	}
+	return fmt.Sprintf("postgres://%[1]s@%[2]s:%[3]s/%[4]s", u, srv.so.host(), srv.so.portString(), dbn)
 }
