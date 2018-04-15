@@ -97,6 +97,7 @@ func initDBContext(ctx context.Context, dir string, io *InitDBOptions) error {
 type StartOptions struct {
 	Port      uint16
 	SocketDir string
+	DBName    string
 }
 
 func (so *StartOptions) port() uint16 {
@@ -114,15 +115,23 @@ func (so *StartOptions) host() string {
 	return "127.0.0.1"
 }
 
+func (so *StartOptions) socketDir() string {
+	if so.SocketDir == "" {
+		return "''"
+	}
+	return so.SocketDir
+}
+
 // Options generates an string for "-o".
 func (so *StartOptions) Options() string {
-	args := make([]string, 0, 6)
+	args := make([]string, 0, 8)
 	args = append(args, "-h", so.host(), "-F")
 	if so.Port != 0 {
 		args = append(args, "-p", so.portString())
 	}
-	if so.SocketDir != "" {
-		args = append(args, "-k", so.SocketDir)
+	args = append(args, "-k", so.socketDir())
+	if so.DBName != "" {
+		args = append(args, so.DBName)
 	}
 	return strings.Join(args, " ")
 }

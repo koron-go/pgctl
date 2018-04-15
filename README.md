@@ -77,22 +77,3 @@ err := pgctl.Status("dbdir")
 // terminate a database
 err := pgctl.Stop("dbdir")
 ```
-
-## Tips
-
-### Start PostgreSQL server on Debian or Ubuntu
-
-It is required that write permission of /var/run/postgesql directory to start
-PostgreSQL server on Debian or Ubuntu.
-
-To do that, try these commands.
-
-```console
-$ sudo chmod o+w /var/run/postgresql
-```
-
-Or add a user to "postgres" group and logout then login.
-
-```console
-$ sudo adduser $USER postgres
-```
