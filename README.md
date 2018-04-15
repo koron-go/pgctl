@@ -8,19 +8,19 @@
 
 ### Test with independent PostgreSQL
 
-Use `tpgsrv` sub package.
+Use `tpg` sub package.
 
 ```golang
 import (
     "database/sql"
-    "github.com/koron-go/pgctl/tpgsrv"
+    "github.com/koron-go/pgctl/tpg"
     _ "github.com/lib/pq"
     "testing"
 )
 
 func TestWithDB(t *testing.T) {
     // initialize database and start it
-    srv := tpgsrv.New(t)
+    srv := tpg.New(t)
     // remove all data when this test finished
     defer srv.Close()
 

@@ -1,6 +1,6 @@
-# tpgsrv - PostgreSQL server for test
+# tpg - PostgreSQL server for test
 
-`tpgsrv` helps to create independent PostgreSQL server instance for test.
+`tpg` helps to create independent PostgreSQL server instance for test.
 
 cf. `Test::PostgreSQL` for perl
 
@@ -9,14 +9,14 @@ cf. `Test::PostgreSQL` for perl
 ```golang
 import (
     "database/sql"
-    "github.com/koron-go/pgctl/tpgsrv"
+    "github.com/koron-go/pgctl/tpg"
     _ "github.com/lib/pq"
     "testing"
 )
 
 func TestWithDB(t *testing.T) {
     // initialize database and start it
-    srv := tpgsrv.New(t)
+    srv := tpg.New(t)
     // remove all data when this test finished
     defer srv.Close()
 

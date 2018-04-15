@@ -1,4 +1,4 @@
-package tpgsrv
+package tpg
 
 import (
 	"os"
