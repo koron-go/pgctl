@@ -3,6 +3,7 @@ package pgctl
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -211,4 +212,14 @@ func getPgCtl() string {
 		return "pg_ctl"
 	}
 	return filepath.Join(dir, "bin", "pg_ctl")
+}
+
+// Name returns data source name.
+func Name(io *InitDBOptions, so *StartOptions) string {
+	u := io.user()
+	dbn := so.DBName
+	if dbn == "" {
+		dbn = u
+	}
+	return fmt.Sprintf("postgres://%[1]s@%[2]s:%[3]s/%[4]s", u, so.host(), so.portString(), dbn)
 }

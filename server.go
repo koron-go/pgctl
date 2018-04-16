@@ -1,7 +1,6 @@
 package pgctl
 
 import (
-	"fmt"
 	"os"
 	"sync"
 )
@@ -101,10 +100,5 @@ func (srv *Server) Name() string {
 	if !srv.r {
 		return ""
 	}
-	u := srv.io.user()
-	dbn := srv.so.DBName
-	if dbn == "" {
-		dbn = u
-	}
-	return fmt.Sprintf("postgres://%[1]s@%[2]s:%[3]s/%[4]s", u, srv.so.host(), srv.so.portString(), dbn)
+	return Name(&srv.io, &srv.so)
 }
