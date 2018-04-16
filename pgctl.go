@@ -221,5 +221,5 @@ func Name(io *InitDBOptions, so *StartOptions) string {
 	if dbn == "" {
 		dbn = u
 	}
-	return fmt.Sprintf("postgres://%[1]s@%[2]s:%[3]s/%[4]s", u, so.host(), so.portString(), dbn)
+	return fmt.Sprintf("postgres://%[1]s@%[2]s:%[3]s/%[4]s?sslmode=disable", u, so.host(), so.portString(), dbn)
 }
