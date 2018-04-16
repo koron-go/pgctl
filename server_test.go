@@ -26,7 +26,7 @@ func TestDB(t *testing.T) {
 	defer srv.Stop()
 
 	n := srv.Name()
-	if n != "postgres://postgres@127.0.0.1:5432/postgres" {
+	if n != "postgres://postgres@127.0.0.1:5432/postgres?sslmode=disable" {
 		t.Error("srv.Name() returns unexpected:", n)
 	}
 }
