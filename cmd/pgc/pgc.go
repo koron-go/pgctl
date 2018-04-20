@@ -42,6 +42,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Start failed: %s", err)
 		}
+		fmt.Println(pgctl.Name(&pgctl.InitDBOptions{}, so))
 	case "status":
 		err := pgctl.Status(dataDir)
 		if err != nil {
