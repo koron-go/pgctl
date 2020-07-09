@@ -66,12 +66,12 @@ func (io *InitDBOptions) locale() string {
 
 // InitDB creates a dir and initiate as PostgreSQL database.
 func InitDB(dir string, io *InitDBOptions) error {
-	return initDBContext(context.Background(), dir, io)
+	return InitDBContext(context.Background(), dir, io)
 }
 
-// initDBContext creates a dir and initiate as PostgreSQL database with
+// InitDBContext creates a dir and initiate as PostgreSQL database with
 // Context.
-func initDBContext(ctx context.Context, dir string, io *InitDBOptions) error {
+func InitDBContext(ctx context.Context, dir string, io *InitDBOptions) error {
 	if io == nil {
 		io = &InitDBOptions{}
 	}
@@ -139,16 +139,16 @@ func (so *StartOptions) Options() string {
 
 // Start starts PostgreSQL server on dir.
 func Start(dir string, so *StartOptions) error {
-	return startContext(context.Background(), dir, so)
+	return StartContext(context.Background(), dir, so)
 }
 
-// startContext starts PostgreSQL server on dir with Context.
-func startContext(ctx context.Context, dir string, so *StartOptions) error {
+// StartContext starts PostgreSQL server on dir with Context.
+func StartContext(ctx context.Context, dir string, so *StartOptions) error {
 	if so == nil {
 		so = &StartOptions{}
 	}
 
-	err := statusContext(ctx, dir)
+	err := StatusContext(ctx, dir)
 	if err == nil {
 		return ErrAlreadyRunning
 	}
@@ -166,11 +166,11 @@ func startContext(ctx context.Context, dir string, so *StartOptions) error {
 
 // Status checks PostgreSQL server is running or not.
 func Status(dir string) error {
-	return statusContext(context.Background(), dir)
+	return StatusContext(context.Background(), dir)
 }
 
-// statusContext checks PostgreSQL server is running or not, with Context.
-func statusContext(ctx context.Context, dir string) error {
+// StatusContext checks PostgreSQL server is running or not, with Context.
+func StatusContext(ctx context.Context, dir string) error {
 	cmd := exec.CommandContext(ctx, getPgCtl(), "status", "-D", dir)
 	err := cmd.Run()
 	if err != nil {
@@ -184,11 +184,11 @@ func statusContext(ctx context.Context, dir string) error {
 
 // Stop stops PostgreSQL server on dir.
 func Stop(dir string) error {
-	return stopContext(context.Background(), dir)
+	return StopContext(context.Background(), dir)
 }
 
-// stopContext stops PostgreSQL server on dir with Context.
-func stopContext(ctx context.Context, dir string) error {
+// StopContext stops PostgreSQL server on dir with Context.
+func StopContext(ctx context.Context, dir string) error {
 	cmd := exec.CommandContext(ctx, getPgCtl(), "stop", "-s", "-D", dir)
 	err := cmd.Run()
 	if err != nil {
