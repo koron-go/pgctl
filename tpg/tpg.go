@@ -1,3 +1,6 @@
+/*
+Package tpg provides utilities to write tests with pgctl package.
+*/
 package tpg
 
 import (
