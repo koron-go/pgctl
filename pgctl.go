@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -130,7 +131,9 @@ func (so *StartOptions) Options() string {
 	if so.Port != 0 {
 		args = append(args, "-p", so.portString())
 	}
-	args = append(args, "-k", so.socketDir())
+	if runtime.GOOS != "windows" {
+		args = append(args, "-k", so.socketDir())
+	}
 	if so.DBName != "" {
 		args = append(args, so.DBName)
 	}
