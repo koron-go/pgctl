@@ -4,7 +4,6 @@ Package tpg provides utilities to write tests with pgctl package.
 package tpg
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -23,7 +22,7 @@ type Server struct {
 // New creates an independent instance of PostgreSQL server and starts it.
 func New(tb testing.TB) *Server {
 	tb.Helper()
-	dir, err := ioutil.TempDir("", "tpg-")
+	dir, err := os.MkdirTemp("", "tpg-")
 	if err != nil {
 		tb.Fatal("failed to create dir for PostgreSQL server:", err)
 	}
