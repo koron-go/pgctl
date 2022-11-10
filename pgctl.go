@@ -35,10 +35,11 @@ type InitDBOptions struct {
 
 // Options generates an string for "-o".
 func (io *InitDBOptions) Options() string {
-	args := make([]string, 0, 10)
+	args := make([]string, 0, 7)
 	args = append(args,
 		"-U", io.user(),
-		"-A trust",
+		"-A", "trust",
+		"-N",
 		"--encoding="+io.encoding(),
 		"--locale="+io.locale())
 	return strings.Join(args, " ")
@@ -126,8 +127,8 @@ func (so *StartOptions) socketDir() string {
 
 // Options generates an string for "-o".
 func (so *StartOptions) Options() string {
-	args := make([]string, 0, 8)
-	args = append(args, "-h", so.host(), "-F")
+	args := make([]string, 0, 11)
+	args = append(args, "-h", so.host(), "-F", "--fsync=off", "--full_page_writes=off", "--synchronous_commit=off")
 	if so.Port != 0 {
 		args = append(args, "-p", so.portString())
 	}
