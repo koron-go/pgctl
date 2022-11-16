@@ -2,6 +2,7 @@ package tempg_test
 
 import (
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/koron-go/pgctl/tempg"
@@ -40,4 +41,34 @@ func TestServers(t *testing.T) {
 	} else if !os.IsNotExist(err) {
 		t.Error("unexpected error:", err)
 	}
+}
+
+func TestParallelServers(t *testing.T) {
+	t.Log("starting")
+	var wgStart sync.WaitGroup
+	var wgClose sync.WaitGroup
+	for i := 0; i < 16; i++ {
+		wgStart.Add(1)
+		wgClose.Add(1)
+		go func(n int) {
+			s, err := tempg.New()
+			if err != nil {
+				t.Errorf("failed to start #%d server: %s", n, err)
+				wgStart.Done()
+				wgClose.Done()
+				return
+			}
+			wgStart.Done()
+			wgStart.Wait()
+			err = s.Close()
+			if err != nil {
+				t.Errorf("failed to close #%d server: %s", n, err)
+			}
+			wgClose.Done()
+		}(i)
+	}
+	wgStart.Wait()
+	t.Log("started")
+	wgClose.Wait()
+	t.Log("closed")
 }

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/koron-go/pgctl"
 )
@@ -38,21 +39,30 @@ func New() (*Server, error) {
 }
 
 // defaultPort is default port listening by PostgreSQL.
-var defaultPort uint16 = 15432
+var defaultPort uint16 = 25432
 
 var lastIndex uint16
 
 const numPorts uint16 = 1024
 
+var mu sync.Mutex
+
+func newPort() uint16 {
+	mu.Lock()
+	newPort := defaultPort + lastIndex%numPorts
+	lastIndex++
+	mu.Unlock()
+	return newPort
+}
+
 func start(pg *pgctl.Server) (uint16, error) {
 	// select unused port
 	var err error
-	for i := uint16(0); i < 10; i++ {
-		port := defaultPort + (lastIndex+i)%numPorts
+	for i := uint16(0); i < 3; i++ {
+		port := newPort()
 		pg.StartOptions(&pgctl.StartOptions{Port: port})
 		err = pg.Start()
 		if err == nil {
-			lastIndex = i + 1
 			return port, nil
 		}
 	}
