@@ -4,9 +4,9 @@ Package tpg provides utilities to write tests with pgctl package.
 package tpg
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/koron-go/pgctl"
@@ -23,7 +23,7 @@ type Server struct {
 // New creates an independent instance of PostgreSQL server and starts it.
 func New(tb testing.TB) *Server {
 	tb.Helper()
-	dir, err := ioutil.TempDir("", "tpg-")
+	dir, err := os.MkdirTemp("", "tpg-")
 	if err != nil {
 		tb.Fatal("failed to create dir for PostgreSQL server:", err)
 	}
@@ -41,17 +41,26 @@ var DefaultPort uint16 = 15432
 
 var lastIndex uint16
 
-const numPorts uint16 = 10
+const numPorts uint16 = 128
+
+var mu sync.Mutex
+
+func newPort() uint16 {
+	mu.Lock()
+	newPort := DefaultPort + lastIndex%numPorts
+	lastIndex++
+	mu.Unlock()
+	return newPort
+}
 
 func start(psrv *pgctl.Server) (uint16, error) {
 	// select unused port
 	var err error
-	for i := uint16(0); i < 10; i++ {
-		port := DefaultPort + (lastIndex+i)%numPorts
+	for i := uint16(0); i < 3; i++ {
+		port := newPort()
 		psrv.StartOptions(&pgctl.StartOptions{Port: port})
 		err = psrv.Start()
 		if err == nil {
-			lastIndex = i + 1
 			return port, nil
 		}
 	}

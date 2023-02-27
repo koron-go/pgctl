@@ -1,7 +1,6 @@
 package pgctl
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -13,7 +12,7 @@ func TestPgctl(t *testing.T) {
 		t.Skip("can't find pg_ctl")
 	}
 
-	tmp, err := ioutil.TempDir("", t.Name())
+	tmp, err := os.MkdirTemp("", t.Name())
 	if err != nil {
 		t.Fatal(err)
 	}
