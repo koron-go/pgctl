@@ -5,10 +5,15 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/koron-go/pgctl"
 	"github.com/koron-go/pgctl/tempg"
 )
 
 func TestServers(t *testing.T) {
+	if !pgctl.IsAvailable() {
+		t.Skip("can't find pg_ctl")
+	}
+
 	s1, err := tempg.New()
 	if err != nil {
 		t.Fatal("failed to start #1 server:", err)
@@ -44,6 +49,10 @@ func TestServers(t *testing.T) {
 }
 
 func TestParallelServers(t *testing.T) {
+	if !pgctl.IsAvailable() {
+		t.Skip("can't find pg_ctl")
+	}
+
 	t.Log("starting")
 	var wgStart sync.WaitGroup
 	var wgClose sync.WaitGroup

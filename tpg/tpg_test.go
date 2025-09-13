@@ -3,9 +3,15 @@ package tpg
 import (
 	"os"
 	"testing"
+
+	"github.com/koron-go/pgctl"
 )
 
 func TestServer(t *testing.T) {
+	if !pgctl.IsAvailable() {
+		t.Skip("can't find pg_ctl")
+	}
+
 	s1 := New(t)
 	defer s1.Close()
 
