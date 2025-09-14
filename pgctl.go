@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -165,7 +166,8 @@ func StartContext(ctx context.Context, dir string, so *StartOptions) error {
 
 	cmd := exec.CommandContext(ctx, getPgCtl(), "start", "-s", "-D", dir, "-w", "-o", so.Options())
 	err = cmd.Run()
-	if _, ok := err.(*exec.ExitError); ok {
+	if xerr, ok := err.(*exec.ExitError); ok {
+		log.Printf("Start failed: %s: %s", err, string(xerr.Stderr))
 		return ErrStartDatabase
 	}
 	return err
@@ -204,7 +206,8 @@ func StopContext(ctx context.Context, dir string) error {
 	cmd := exec.CommandContext(ctx, getPgCtl(), "stop", "-s", "-D", dir)
 	err := cmd.Run()
 	if err != nil {
-		if _, ok := err.(*exec.ExitError); ok {
+		if xerr, ok := err.(*exec.ExitError); ok {
+			log.Printf("Stop failed: %s: %s", err, string(xerr.Stderr))
 			return ErrNotRunning
 		}
 		return err

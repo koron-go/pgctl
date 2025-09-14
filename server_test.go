@@ -20,12 +20,12 @@ func TestDB(t *testing.T) {
 
 	srv := NewServer(dir)
 	if err := srv.Start(); err != nil {
-		t.Fatal("failed to stat DB", err)
+		t.Fatalf("failed to stat DB: %s", err)
 	}
 	defer srv.Stop()
 
 	n := srv.Name()
 	if n != "postgres://postgres@127.0.0.1:5432/postgres?sslmode=disable" {
-		t.Error("srv.Name() returns unexpected:", n)
+		t.Errorf("srv.Name() returns unexpected: %s", n)
 	}
 }
