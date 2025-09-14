@@ -26,6 +26,11 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
+    - name: Setup PostgreSQL
+      uses: tj-actions/install-postgresql@a889ed6c6fa05022333ed4101295bb1d604f97a8 # v3.2.0
+      with:
+        postgresql-version: 17
+
     - run: go test ./...
 
     - name: Build all "main" packages
