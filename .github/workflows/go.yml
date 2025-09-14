@@ -16,13 +16,9 @@ jobs:
       matrix:
         os:
         - ubuntu-latest
+        - ubuntu-24.04-arm
         - macos-latest
-        # "pg_ctl start" fails on these platforms for unknown reasons.
-        #
-        # See also: https://github.com/koron-go/pgctl/issues/9
-        #
-        #- ubuntu-24.04-arm
-        #- windows-latest
+        - windows-latest
 
     steps:
 
