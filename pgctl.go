@@ -13,6 +13,9 @@ import (
 )
 
 var (
+	// ErrNotInitialized means data directory is not initialized yet.
+	ErrNotInitialized = errors.New("datadir is not initialized")
+
 	// ErrAlreadyExists means database is existing already
 	ErrAlreadyExists = errors.New("database exists already")
 
@@ -178,8 +181,13 @@ func StatusContext(ctx context.Context, dir string) error {
 	cmd := exec.CommandContext(ctx, getPgCtl(), "status", "-D", dir)
 	err := cmd.Run()
 	if err != nil {
-		if _, ok := err.(*exec.ExitError); ok {
-			return ErrNotRunning
+		if xerr, ok := err.(*exec.ExitError); ok {
+			switch xerr.ExitCode() {
+			case 3:
+				return ErrNotRunning
+			case 4:
+				return ErrNotInitialized
+			}
 		}
 		return err
 	}
