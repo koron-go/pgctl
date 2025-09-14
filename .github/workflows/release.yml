@@ -186,4 +186,4 @@ jobs:
         append_body: true
 
 # based on: github.com/koron-go/_skeleton/.github/workflows/release.yml
-# $Hash:5ece2a99f0f728149414355f0c4ab509e6a032f4d72dc0a2bbc40247$
+# $Hash:617b5d7ee2d81b671e72edb2a276ecd4a7de777c203915530c190a93$
