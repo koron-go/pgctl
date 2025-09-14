@@ -57,6 +57,7 @@ jobs:
       RELEASE_TARGETS: ${{needs.check.outputs.targets}}
 
     strategy:
+      fail-fast: false
       matrix:
         os:
         - ubuntu-latest
