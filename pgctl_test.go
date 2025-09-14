@@ -21,65 +21,65 @@ func TestPgctl(t *testing.T) {
 
 	// before InitDB
 	err = Start(dir, nil)
-	if err != ErrStartDatabase {
-		t.Error("unexpected Start() result", err)
+	if err != ErrNotInitialized {
+		t.Errorf("before InitDB: Start() failed unexpectedly: %s", err)
 	}
 	err = Stop(dir)
 	if err != ErrNotRunning {
-		t.Error("unexpected Stop() result", err)
+		t.Errorf("before InitDB: Stop() failed unexpectedly: %s", err)
 	}
 	err = Status(dir)
-	if err != ErrNotRunning {
-		t.Error("unexpected Stop() result", err)
+	if err != ErrNotInitialized {
+		t.Errorf("before InitDB: Status failed unexpectedly: %s", err)
 	}
 
 	err = InitDB(dir, nil)
 	if err != nil {
-		t.Fatal("InitDB() failed", err)
+		t.Fatalf("InitDB() failed: %s", err)
 	}
 
 	// after InitDB() and before Start()
 	err = InitDB(dir, nil)
 	if err != ErrAlreadyExists {
-		t.Error("InitDB() failed", err)
+		t.Errorf("after InitDB: InitDB() failed unexpectedly: %s", err)
 	}
 	err = Stop(dir)
 	if err != ErrNotRunning {
-		t.Error("unexpected Stop() result", err)
+		t.Errorf("after InitDB: Stop() failed unexpectedly: %s", err)
 	}
 	err = Status(dir)
 	if err != ErrNotRunning {
-		t.Error("unexpected Stop() result", err)
+		t.Errorf("after InitDB: Status() failed unexpectedly: %s", err)
 	}
 
 	err = Start(dir, nil)
 	if err != nil {
-		t.Fatal("Start() failed", err)
+		t.Fatalf("Start() failed: %s", err)
 	}
 	time.Sleep(3 * time.Second)
 
 	// after Start()
 	err = Status(dir)
 	if err != nil {
-		t.Error("Status() failed", err)
+		t.Errorf("after Start: Status() failed: %s", err)
 	}
 	err = Start(dir, nil)
 	if err != ErrAlreadyRunning {
-		t.Error("Start() failed", err)
+		t.Errorf("after Start: Start() failed unexpectedly: %s", err)
 	}
 
 	err = Stop(dir)
 	if err != nil {
-		t.Fatal("Stop() failed", err)
+		t.Fatalf("Stop() failed: %s", err)
 	}
 
 	// after Stop()
 	err = Stop(dir)
 	if err != ErrNotRunning {
-		t.Error("unexpected Stop() result", err)
+		t.Errorf("after Stop: Stop() failed unexpectedly: %s", err)
 	}
 	err = Status(dir)
 	if err != ErrNotRunning {
-		t.Error("unexpected Stop() result", err)
+		t.Errorf("after Stop: Status() failed unexpectedly: %s", err)
 	}
 }
