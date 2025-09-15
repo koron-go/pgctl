@@ -1,10 +1,8 @@
 package pgctl
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
-	"time"
 )
 
 func TestPgctl(t *testing.T) {
@@ -14,15 +12,11 @@ func TestPgctl(t *testing.T) {
 		t.Skip("can't find pg_ctl")
 	}
 
-	tmp, err := os.MkdirTemp("", t.Name())
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmp)
-	dir := filepath.Join(tmp, "data")
+	tmpdir := t.TempDir()
+	dir := filepath.Join(tmpdir, "data")
 
 	// before InitDB
-	err = Start(dir, &StartOptions{Port: port})
+	err := Start(dir, &StartOptions{Port: port})
 	if err != ErrNotInitialized {
 		t.Errorf("before InitDB: Start() failed unexpectedly: %s", err)
 	}
@@ -58,7 +52,6 @@ func TestPgctl(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Start() failed: %s", err)
 	}
-	time.Sleep(3 * time.Second)
 
 	// after Start()
 	err = Status(dir)

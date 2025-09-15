@@ -13,10 +13,14 @@ func TestServer(t *testing.T) {
 	}
 
 	s1 := New(t)
-	defer s1.Close()
+	t.Cleanup(func() {
+		s1.Close()
+	})
 
 	s2 := New(t)
-	defer s2.Close()
+	t.Cleanup(func() {
+		s2.Close()
+	})
 
 	// two servers should run in parallel
 	if s1.Dir() == s2.Dir() {
