@@ -6,7 +6,6 @@ package tpg
 import (
 	"os"
 	"path/filepath"
-	"sync"
 	"testing"
 
 	"github.com/koron-go/pgctl"
@@ -28,43 +27,12 @@ func New(tb testing.TB) *Server {
 		tb.Fatal("failed to create dir for PostgreSQL server:", err)
 	}
 	psrv := pgctl.NewServer(filepath.Join(dir, "data"))
-	pn, err := start(psrv)
+	err = psrv.Start()
 	if err != nil {
 		os.RemoveAll(dir)
 		tb.Fatal("failed to start PostgreSQL server:", err)
 	}
-	return &Server{tb: tb, dir: dir, psrv: psrv, pn: pn}
-}
-
-// DefaultPort is default port listening by PostgreSQL.
-var DefaultPort uint16 = 15432
-
-var lastIndex uint16
-
-const numPorts uint16 = 128
-
-var mu sync.Mutex
-
-func newPort() uint16 {
-	mu.Lock()
-	newPort := DefaultPort + lastIndex%numPorts
-	lastIndex++
-	mu.Unlock()
-	return newPort
-}
-
-func start(psrv *pgctl.Server) (uint16, error) {
-	// select unused port
-	var err error
-	for i := uint16(0); i < 3; i++ {
-		port := newPort()
-		psrv.StartOptions(&pgctl.StartOptions{Port: port})
-		err = psrv.Start()
-		if err == nil {
-			return port, nil
-		}
-	}
-	return 0, err
+	return &Server{tb: tb, dir: dir, psrv: psrv, pn: psrv.Port()}
 }
 
 // Close closes a server and removes all related resources.

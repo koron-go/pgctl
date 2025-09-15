@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 var (
@@ -28,6 +30,8 @@ var (
 	// ErrStartDatabase means failed to start database.
 	ErrStartDatabase = errors.New("failed to start database")
 )
+
+const localhost = "localhost"
 
 // InitDBOptions is a set of options of InitDB().
 type InitDBOptions struct {
@@ -106,19 +110,12 @@ type StartOptions struct {
 	DBName    string
 }
 
-func (so *StartOptions) port() uint16 {
-	if so.Port == 0 {
-		return 5432
-	}
-	return so.Port
-}
-
 func (so *StartOptions) portString() string {
-	return strconv.Itoa(int(so.port()))
+	return strconv.Itoa(int(so.Port))
 }
 
 func (so *StartOptions) host() string {
-	return "127.0.0.1"
+	return localhost
 }
 
 func (so *StartOptions) socketDir() string {
@@ -149,6 +146,17 @@ func Start(dir string, so *StartOptions) error {
 	return StartContext(context.Background(), dir, so)
 }
 
+const (
+	portDefault uint16 = 15433
+	portNumber  uint16 = 1024
+	portRetry   int    = 5
+)
+
+var (
+	portMu    sync.Mutex
+	portIndex uint16
+)
+
 // StartContext starts PostgreSQL server on dir with Context.
 func StartContext(ctx context.Context, dir string, so *StartOptions) error {
 	if so == nil {
@@ -163,8 +171,44 @@ func StartContext(ctx context.Context, dir string, so *StartOptions) error {
 		return err
 	}
 
+	if so.Port != 0 {
+		return start(ctx, dir, so)
+	}
+
+	count := 0
+	portMu.Lock()
+	defer portMu.Unlock()
+	for {
+		err := ctx.Err()
+		if err != nil {
+			return err
+		}
+		port := portDefault + portIndex%portNumber
+		portIndex++
+
+		var lc net.ListenConfig
+		ln, err := lc.Listen(ctx, "tcp", fmt.Sprintf("%s:%d", localhost, port))
+		if err != nil {
+			continue
+		}
+		ln.Close()
+
+		so.Port = port
+		err = start(ctx, dir, so)
+		if err != nil {
+			count++
+			if count >= portRetry {
+				return err
+			}
+			continue
+		}
+		return nil
+	}
+}
+
+func start(ctx context.Context, dir string, so *StartOptions) error {
 	cmd := exec.CommandContext(ctx, getPgCtl(), "start", "-s", "-D", dir, "-w", "-o", so.Options())
-	err = cmd.Run()
+	err := cmd.Run()
 	if _, ok := err.(*exec.ExitError); ok {
 		return ErrStartDatabase
 	}
