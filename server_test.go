@@ -16,8 +16,6 @@ func TestDB(t *testing.T) {
 	dir := filepath.Join(tmpdir, "data")
 
 	srv := NewServer(dir)
-	so := &StartOptions{}
-	srv.StartOptions(so)
 	if err := srv.Start(); err != nil {
 		t.Fatalf("failed to stat DB: %s", err)
 	}
