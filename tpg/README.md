@@ -18,14 +18,18 @@ func TestWithDB(t *testing.T) {
     // initialize database and start it
     srv := tpg.New(t)
     // remove all data when this test finished
-    defer srv.Close()
+    t.Cleanup(func() {
+        srv.Close()
+    })
 
     // connect to database
     db, err := sql.Open("postgres", srv.Name())
     if err != nil {
         t.Fatal(err)
     }
-    defer db.Close()
+    t.Cleanup(func() {
+        db.Close()
+    })
 
     // TODO: test with db!
 }
