@@ -6,8 +6,6 @@ import (
 )
 
 func TestPgctl(t *testing.T) {
-	const port = 5453
-
 	if !IsAvailable() {
 		t.Skip("can't find pg_ctl")
 	}

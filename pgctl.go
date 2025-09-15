@@ -110,12 +110,8 @@ type StartOptions struct {
 	DBName    string
 }
 
-func (so *StartOptions) port() uint16 {
-	return so.Port
-}
-
 func (so *StartOptions) portString() string {
-	return strconv.Itoa(int(so.port()))
+	return strconv.Itoa(int(so.Port))
 }
 
 func (so *StartOptions) host() string {
