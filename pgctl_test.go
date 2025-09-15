@@ -16,7 +16,7 @@ func TestPgctl(t *testing.T) {
 	dir := filepath.Join(tmpdir, "data")
 
 	// before InitDB
-	err := Start(dir, &StartOptions{Port: port})
+	err := Start(dir, &StartOptions{})
 	if err != ErrNotInitialized {
 		t.Errorf("before InitDB: Start() failed unexpectedly: %s", err)
 	}
@@ -48,7 +48,7 @@ func TestPgctl(t *testing.T) {
 		t.Errorf("after InitDB: Status() failed unexpectedly: %s", err)
 	}
 
-	err = Start(dir, &StartOptions{Port: port})
+	err = Start(dir, &StartOptions{})
 	if err != nil {
 		t.Fatalf("Start() failed: %s", err)
 	}
@@ -58,7 +58,7 @@ func TestPgctl(t *testing.T) {
 	if err != nil {
 		t.Errorf("after Start: Status() failed: %s", err)
 	}
-	err = Start(dir, &StartOptions{Port: port})
+	err = Start(dir, &StartOptions{})
 	if err != ErrAlreadyRunning {
 		t.Errorf("after Start: Start() failed unexpectedly: %s", err)
 	}
