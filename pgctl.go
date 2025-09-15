@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"os/exec"
@@ -207,7 +206,6 @@ func StartContext(ctx context.Context, dir string, so *StartOptions) error {
 			}
 			continue
 		}
-		log.Printf("started: %+v", so)
 		return nil
 	}
 }

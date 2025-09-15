@@ -33,7 +33,7 @@ func TestDB(t *testing.T) {
 	if m[1] != "localhost" {
 		t.Errorf("unexpected host: %s", m[1])
 	}
-	if n, err := strconv.Atoi(m[2]); err != nil || n <= 0 {
-		t.Errorf("unexpected port: %s err=%s", m[2], err)
+	if n, err := strconv.Atoi(m[2]); err != nil || n != int(srv.Port()) {
+		t.Errorf("unexpected port: got=%s want=%d err=%s", m[2], srv.Port(), err)
 	}
 }

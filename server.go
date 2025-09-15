@@ -1,7 +1,6 @@
 package pgctl
 
 import (
-	"log"
 	"os"
 	"sync"
 )
@@ -69,7 +68,6 @@ func (srv *Server) Start() error {
 	if err := Start(srv.dir, &srv.so); err != nil {
 		return err
 	}
-	log.Printf("server started: %+v", &srv.so)
 	srv.running = true
 	return nil
 }
@@ -104,4 +102,9 @@ func (srv *Server) Name() string {
 		return ""
 	}
 	return Name(&srv.io, &srv.so)
+}
+
+// Port returned assigned port number for PostgreSQL server.
+func (srv *Server) Port() uint16 {
+	return srv.so.Port
 }
