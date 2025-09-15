@@ -2,7 +2,6 @@ package pgctl
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"testing"
 )
@@ -14,19 +13,17 @@ func TestDB(t *testing.T) {
 		t.Skip("can't find pg_ctl")
 	}
 
-	tmp, err := os.MkdirTemp("", t.Name())
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmp)
-	dir := filepath.Join(tmp, "data")
+	tmpdir := t.TempDir()
+	dir := filepath.Join(tmpdir, "data")
 
 	srv := NewServer(dir)
 	srv.StartOptions(&StartOptions{Port: port})
 	if err := srv.Start(); err != nil {
 		t.Fatalf("failed to stat DB: %s", err)
 	}
-	defer srv.Stop()
+	t.Cleanup(func() {
+		srv.Stop()
+	})
 
 	var (
 		got  = srv.Name()

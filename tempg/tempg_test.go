@@ -18,13 +18,17 @@ func TestServers(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to start #1 server: %s", err)
 	}
-	defer s1.Close()
+	t.Cleanup(func() {
+		s1.Close()
+	})
 
 	s2, err := tempg.New()
 	if err != nil {
 		t.Fatalf("failed to start #2 server: %s", err)
 	}
-	defer s2.Close()
+	t.Cleanup(func() {
+		s2.Close()
+	})
 
 	// two servers should run in parallel
 	if s1.Dir() == s2.Dir() {
