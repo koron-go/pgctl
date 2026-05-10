@@ -233,7 +233,7 @@ func StatusContext(ctx context.Context, dir string) error {
 				return ErrNotInitialized
 			}
 		}
-		return err
+		return fmt.Errorf("pg_ctl status failed on %s: %w", dir, err)
 	}
 	return nil
 }
