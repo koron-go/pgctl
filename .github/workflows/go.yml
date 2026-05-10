@@ -63,8 +63,7 @@ jobs:
         include:
         - { os: darwin,  arch: amd64, runner: macos-latest,     }
         - { os: darwin,  arch: arm64, runner: macos-latest,     }
-        # Not support FreeBSD, for now.
-        #- { os: freebsd, arch: amd64, runner: ubuntu-latest,    }
+        - { os: freebsd, arch: amd64, runner: ubuntu-latest,    }
         - { os: linux,   arch: arm64, runner: ubuntu-24.04-arm, }
         - { os: linux,   arch: amd64, runner: ubuntu-latest,    }
         - { os: windows, arch: amd64, runner: windows-latest,   }
@@ -129,8 +128,26 @@ jobs:
           echo "::group::Install Go"
           pkg install -y go
 
+          echo "::group::Install PostgreSQL 17"
+          pkg install -y postgresql17-server
+          echo "::endgroup::"
+
+          echo "::group::Add runner:runner"
+          pw groupadd runner
+          pw useradd runner -g runner -G wheel -m -s /bin/sh
+          mkdir /home/runner/.ssh
+          cp /root/.ssh/* /home/runner/.ssh/
+          chown -R runner:runner /home/runner/.ssh
+          echo "::endgroup::"
+
+    - name: Replace "freebsd" shell executed by user runner.
+      if: matrix.os == 'freebsd'
+      shell: bash
+      run: sed -i.root -e 's!ssh !ssh runner@!' ~/.local/bin/freebsd
+
     # pgctl requires PostgreSQL to test
     - name: Setup PostgreSQL
+      if: matrix.os != 'freebsd'
       uses: tj-actions/install-postgresql@a889ed6c6fa05022333ed4101295bb1d604f97a8 # v3.2.0
       with:
         postgresql-version: 17
