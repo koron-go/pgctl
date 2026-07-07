@@ -2,7 +2,6 @@
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/koron-go/pgctl)](https://pkg.go.dev/github.com/koron-go/pgctl)
 [![Actions/Go](https://github.com/koron-go/pgctl/workflows/Go/badge.svg)](https://github.com/koron-go/pgctl/actions?query=workflow%3AGo)
-[![Go Report Card](https://goreportcard.com/badge/github.com/koron-go/pgctl)](https://goreportcard.com/report/github.com/koron-go/pgctl)
 
 ## Snippets
 
